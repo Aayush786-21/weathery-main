@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homie Weather</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .weather-box {
+            width: 350px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .weather-box h2 {
+            margin-top: 0;
+            font-size: 28px;
+            color: #333;
+        }
+
+        .weather-box p {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .weather-box .city-name {
+            font-size: 36px;
+            color: #000;
+            margin: 10px 0;
+        }
+
+        .weather-box input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .weather-box button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .weather-box button:hover {
+            background-color: #0056b3;
+        }
+
+        .weather-box .error {
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="weather-box">
+        <h2>Weather</h2>
+        <input type="text" id="city-input" placeholder="Enter city name">
+        <button onclick="fetchWeather()">Get Weather</button>
+        <div class="city-name" id="city-name">Kathmandu</div>
+        <p id="weather-info">Loading weather...</p>
+        <p class="error" id="error-info" style="display:none;">Failed to fetch weather data.</p>
+    </div>
+
+    <script>
+        function fetchWeather() {
+            const city = document.getElementById('city-input').value || 'Kathmandu';
+            document.getElementById('city-name').textContent = city;
+            document.getElementById('weather-info').textContent = 'Loading weather...';
+            document.getElementById('error-info').style.display = 'none';
+            
+            fetch(`/get_weather?city=${city}`)
+                .then(response => response.json())
+                .then(data => {
+                    const weatherInfo = document.getElementById('weather-info');
+                    if (data.success) {
+                        weatherInfo.textContent = `Today's weather: ${data.weather}, Temperature: ${data.temperature}°C`;
+                    } else {
+                        weatherInfo.textContent = 'Failed to fetch weather data.';
+                        document.getElementById('error-info').style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching weather:', error);
+                    document.getElementById('weather-info').textContent = 'Failed to fetch weather data.';
+                    document.getElementById('error-info').style.display = 'block';
+                });
+        }
+
+        fetchWeather();
+    </script>
+</body>
+</html>
