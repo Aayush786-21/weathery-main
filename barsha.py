@@ -8,12 +8,13 @@ def get_weather(city):
         response = requests.get(url)
         data = response.json()
         
-        if data['cod'] == 200:
+        if response.status_code == 200:  # Check for successful response
             weather_description = data['weather'][0]['description']
             temperature = data['main']['temp']
             return weather_description, temperature
         else:
+            print(f"Error: {data.get('message', 'City not found')}")
             return None, None
-    except Exception as e:
+    except requests.exceptions.RequestException as e:
         print(f"Error fetching weather data: {e}")
         return None, None
